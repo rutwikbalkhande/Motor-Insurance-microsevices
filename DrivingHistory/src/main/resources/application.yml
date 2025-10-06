@@ -1,10 +1,32 @@
+
+server:
+  port: 8082
+
 spring:
+  application:
+    name: DrivingHistory-service
+
   data:
     mongodb:
       uri: mongodb://localhost:27017
       database: DrivingHistoryDB
 
-server:
-  port: 8082
 
+# Prometheus
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: "*"     # exposes all actuator endpoints including prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
 

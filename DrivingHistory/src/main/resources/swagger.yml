@@ -1,0 +1,4 @@
+# swagger config
+  endpoint:
+    health:
+      show-details: always

@@ -1,4 +1,5 @@
-# service registry use for  "Eureka"
+# service registry use for  "Eureka" 
+# * Showing All Services Endpoint with service Name & port *
 
 *     RUN User Service Port : 8081
 

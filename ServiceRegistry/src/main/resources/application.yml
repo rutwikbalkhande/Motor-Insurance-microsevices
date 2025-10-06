@@ -7,3 +7,25 @@ eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+
+#prometheus
+
+spring:
+  application:
+    name: user_promithus
+
+
+# Prometheus application.yml
+management:
+  endpoints:
+    web:
+      exposure:
+        # include: health,info,metrics,prometheus  # expose Prometheus endpoint use any 1 '*' select all
+        include: '*'
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true  # Enable Prometheus metrics export

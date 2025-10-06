@@ -2,6 +2,9 @@ server:
   port: 8083
 
 spring:
+  application:
+    name: Policy_promithus
+
   datasource:
     url: jdbc:mysql://localhost:3306/policy moto insurance
     username: root
@@ -13,4 +16,17 @@ spring:
     show-sql: true
 
 
-
+# Prometheus application.yml
+management:
+  endpoints:
+    web:
+      exposure:
+        # include: health,info,metrics,prometheus  # expose Prometheus endpoint use any 1 '*' select all
+        include: '*'
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true  # Enable Prometheus metrics export
