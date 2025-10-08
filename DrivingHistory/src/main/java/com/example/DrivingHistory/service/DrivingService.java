@@ -1,7 +1,7 @@
 package com.example.DrivingHistory.service;
 
 import com.example.DrivingHistory.entity.DrivingHistory;
-import com.example.DrivingHistory.entity.UserHistoryResponse;
+import com.example.DrivingHistory.entity.UserHistoryDTO;
 
 import java.util.List;
 
@@ -13,5 +13,7 @@ public interface DrivingService {
     List<DrivingHistory> getAll();
     void deleteHistory(String id);
 
-    UserHistoryResponse getByLicenseNo(String licenseNo);
+    UserHistoryDTO getByLicenseNo(String licenseNo);
+
+    DrivingHistory searchByLicense(String licenseNo);
 }

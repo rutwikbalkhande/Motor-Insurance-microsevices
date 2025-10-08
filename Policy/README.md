@@ -59,3 +59,18 @@
 * Returns list of policies for userID 1
 
 * Used by User service RestTemplate call
+
+
+# Dummy Policy
+
+1. save { creatye Policy for user }
+
+         Post: http://localhost:8083/policies/dummy/save
+
+2.Get policy by using license ( price of policy based on driving History "age")
+
+         Get: http://localhost:8083/policies/dummy/generate/MH123456
+
+3.All dummy Policy for user
+         
+         Get: http://localhost:8083/policies/dummy/all

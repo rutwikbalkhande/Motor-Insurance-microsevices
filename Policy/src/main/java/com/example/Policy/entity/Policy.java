@@ -24,9 +24,10 @@ public class Policy {
     private String policyNo;
     private String licenseNo;      // Used for driving history
     private double premium_amount;
-    private String type;           // e.g. Car, Bike
+    private String type;           // e.g. Car, Bike / Health
     private LocalDate startDate;
     private LocalDate endDate;
+    private Long policyId;    // Dummy policy Id store
 
     @Transient
     private int age ;

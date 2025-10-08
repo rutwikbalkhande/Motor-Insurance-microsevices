@@ -1,7 +1,5 @@
 #prometheus
 spring:
-  application:
-    name:Claim_Service
 
 server:
   port=8084:

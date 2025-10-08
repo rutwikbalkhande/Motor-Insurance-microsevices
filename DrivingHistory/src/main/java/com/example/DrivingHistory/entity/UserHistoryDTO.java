@@ -9,8 +9,16 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserHistoryResponse {
+
+public class UserHistoryDTO {
 
     private UserDetails user;
     private List<DrivingHistory> drivingHistoryList;
+    private String message;
+
+    // Custom constructor for normal responses
+    public UserHistoryDTO(UserDetails user, List<DrivingHistory> drivingHistoryList) {
+        this.user = user;
+        this.drivingHistoryList = drivingHistoryList;
+    }
 }

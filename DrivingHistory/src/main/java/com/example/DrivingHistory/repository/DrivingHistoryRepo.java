@@ -14,5 +14,10 @@ public interface DrivingHistoryRepo extends MongoRepository<DrivingHistory, Stri
 
     // fetch by licenseNo
     List<DrivingHistory> findByLicenseNo(String licenseNo);
+
+
+    //  If you only need one record, you can also add:
+    DrivingHistory findFirstByLicenseNo(String licenseNo);
 }
+
 
