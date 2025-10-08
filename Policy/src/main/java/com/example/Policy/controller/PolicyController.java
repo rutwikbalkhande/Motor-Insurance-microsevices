@@ -1,6 +1,7 @@
 package com.example.Policy.controller;
 
 import com.example.Policy.entity.Policy;
+import com.example.Policy.entity.dummyPolicy.DummyPolicy;
 import com.example.Policy.service.DummyPolicies;
 import com.example.Policy.service.PolicyService;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +45,10 @@ public class PolicyController {
         return policyService.getPoliciesByUser(userId);
     }
 
-    // Dummy endpoint
-    @GetMapping("/dummy/{licenseNo}/{age}")
-    public List<Policy> getDummyPolicies(@PathVariable String licenseNo,  @PathVariable  int age) {
-        return dummyPolicies.generateDummyPolicies(licenseNo, age);
+
+    @GetMapping("/details/policyId/{policyId}")
+    public DummyPolicy policyDetails(@PathVariable Long policyId){
+        return  policyService.policyDetails( policyId);
     }
+
 }

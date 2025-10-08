@@ -2,6 +2,7 @@ package com.example.Policy.service;
 
 
 import com.example.Policy.entity.Policy;
+import com.example.Policy.entity.dummyPolicy.DummyPolicy;
 import com.example.Policy.repository.PolicyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,4 +20,6 @@ public interface PolicyService {
     List<Policy> getPoliciesByUser(Long id);
 
     List<Policy> getPoliciesByLicense(String licenseNo);
+
+    DummyPolicy policyDetails(Long policyId);
 }

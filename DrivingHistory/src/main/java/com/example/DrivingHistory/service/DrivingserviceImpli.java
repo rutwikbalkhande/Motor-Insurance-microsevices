@@ -2,16 +2,16 @@ package com.example.DrivingHistory.service;
 
 import com.example.DrivingHistory.entity.DrivingHistory;
 import com.example.DrivingHistory.entity.UserDetails;
-import com.example.DrivingHistory.entity.UserHistoryResponse;
+import com.example.DrivingHistory.entity.UserHistoryDTO;
 import com.example.DrivingHistory.repository.DrivingHistoryRepo;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 @Service
 @Slf4j
@@ -64,16 +64,26 @@ public class DrivingserviceImpli implements DrivingService {
 
 
     @Override
-    public UserHistoryResponse getByLicenseNo(String licenseNo) {
+    public UserHistoryDTO getByLicenseNo(String licenseNo) {
         // Fetch driving history list from Mongo by licenseNo
         List<DrivingHistory> drivingHistoryList = drivingRepo.findByLicenseNo(licenseNo);
 
-        // Fetch user details from User Service
-        String url = "http://localhost:8081/api/users/licenseNo/" + licenseNo;
+
+        // Fetch user details from user-Service
+        String url = "http://USER-SERVICE/users/licenseNo/" + licenseNo;
         UserDetails userDto = restTemplate.getForObject(url, UserDetails.class);
 
+        if(drivingHistoryList == null || drivingHistoryList.isEmpty()){
+                 return new UserHistoryDTO(userDto, new ArrayList<>(),"No Driving violation Found !");
+        }
+
         // Return combined response DTO
-        return new UserHistoryResponse(userDto, drivingHistoryList);
+        return new UserHistoryDTO(userDto, drivingHistoryList);
+    }
+
+    @Override
+    public DrivingHistory searchByLicense(String licenseNo) {
+        return drivingRepo.findFirstByLicenseNo(licenseNo);
     }
 
 }

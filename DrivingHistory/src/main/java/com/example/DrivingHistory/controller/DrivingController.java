@@ -1,8 +1,9 @@
 package com.example.DrivingHistory.controller;
 
 import com.example.DrivingHistory.entity.DrivingHistory;
-import com.example.DrivingHistory.entity.UserHistoryResponse;
+import com.example.DrivingHistory.entity.UserHistoryDTO;
 import com.example.DrivingHistory.service.DrivingService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/driving-history")
+@Slf4j
 public class DrivingController {
 
     private final DrivingService service;
@@ -18,7 +20,7 @@ public class DrivingController {
         this.service = service;
     }
 
-    @PostMapping("save")
+    @PostMapping("/save")
     public DrivingHistory createHistory(@RequestBody DrivingHistory history) {
         return service.saveHistory(history);
     }
@@ -47,9 +49,15 @@ public class DrivingController {
         service.deleteHistory(id);
         return "Driving history deleted with id: " + id;
     }
+    @GetMapping("/search/{licenseNo}")
+    public DrivingHistory searchByLicense(@PathVariable String licenseNo) {
+        log.info("DrivingController | Searching license number: {}", licenseNo);
+        return service.searchByLicense(licenseNo); // ✅ Call service layer method
+    }
 
+    //Fetch User & History by license No.
     @GetMapping("/license/{licenseNo}")
-    public UserHistoryResponse getByLicenseNo(@PathVariable String licenseNo) {
+    public UserHistoryDTO getByLicenseNo(@PathVariable String licenseNo) {
         return service.getByLicenseNo(licenseNo);
     }
 
