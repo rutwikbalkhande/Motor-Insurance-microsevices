@@ -101,8 +101,6 @@ public class ClaimService {
             log.info("data updated succesfully {}", updated);
             return updated;
 
-
-
         }
 
 /*
