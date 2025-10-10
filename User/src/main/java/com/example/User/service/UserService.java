@@ -2,6 +2,8 @@ package com.example.User.service;
 
 import com.example.User.entity.PolicyDTO;
 import com.example.User.entity.User;
+import com.example.User.exceptionHandler.InvalidInputException;
+import com.example.User.exceptionHandler.PolicynotFoundException;
 import com.example.User.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +33,9 @@ public class UserService {
 
     //user by ID
     public User getById(Long userId) {
+
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+                .orElseThrow(() -> new RuntimeException("User not found with id " + userId) );
         return  user;
 
     }
@@ -47,8 +50,6 @@ public class UserService {
     }
 
 
-
-
     public User getPoliciesByUserId(Long userId)
     {
         //get user from Mysql
@@ -56,9 +57,14 @@ public class UserService {
                 ()-> new RuntimeException("user not Found ! with ID:"+ userId));
 
         // fetching Policies using user id from Policy Module Database
-        String url= "http://localhost:8083/policies/user/" + userId;
+        String url= "http://POLICY-SERVICE/policies/user/" + userId;      // String url= "http://localhost:8083/policies/user/" + userId;
+
 
         ArrayList<PolicyDTO> policies = restTemplate.getForObject(url, ArrayList.class);
+        if(policies== null || policies.isEmpty())
+        {
+            throw new PolicynotFoundException("user does not Buy any Policies");
+        }
         user.setPolicies(policies);
 
         return user;
@@ -66,15 +72,14 @@ public class UserService {
 
 
     // fetching Dummy policies for user to check available policies & price based on licenceNo and age.
-    public List<PolicyDTO> getUserWithDummyPolicies(String licenseNo, int age) {
+
+    public List<PolicyDTO> getUserWithDummyPolicies(String licenseNo ) {
       //  User user = userRepo.findByLicenseNo(licenseNo);
-        String url= "http://localhost:8083/policies/dummy/"+ licenseNo + "/" + age ;
+
+        String url= "http://POLICY-SERVICE/policies/dummy/generate/"+ licenseNo ;     // call Policy service - DummyController
 
         return  restTemplate.getForObject(url,ArrayList.class);
 
-
     }
-
-
 
 }
