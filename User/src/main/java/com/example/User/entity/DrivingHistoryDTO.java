@@ -6,14 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-
+/*
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
+*/
 public class DrivingHistoryDTO {
-
+/*
     private String id;
 
     private Long userId;       // Link with User Service
@@ -25,4 +25,6 @@ public class DrivingHistoryDTO {
 
     User user;
     List<?> history;
+
+ */
 }

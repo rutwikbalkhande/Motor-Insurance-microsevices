@@ -1,7 +1,6 @@
 # to Run Spring project all services need to Run to Fetch Data 
 # Run ServiceRegistry "Eureka:
- 
- 
+
      browser : http://localhost:8761/
 
 * Eureka client Add User pom.xml:   
@@ -13,6 +12,17 @@
           <version>4.3.0</version>
       </dependency>
 
+# Kafka Run with Lenses:
+
+    Run Docker File : "docker compose up -d"
+
+# Kafka Lenses  Running port :
+
+       localhost://9991
+
+* User-service {Producer} , Policy-service {Consumer}
+      
+       save data using: localhost://8081/user/kafkaproducer
 * Run All Services :
 
        { User, policy,  DrivingHistory, Service Registry , Claim Module, }
