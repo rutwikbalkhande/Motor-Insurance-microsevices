@@ -43,7 +43,7 @@ public class PolicyServiceImpli implements PolicyService {
     public List<Policy> getPoliciesByLicense(String licenseNo) {
         List<Policy> policies = policyRepository.findByLicenseNo(licenseNo);
         if (policies.isEmpty()) {
-            throw new RuntimeException("No policy found for license number: " + licenseNo);
+            throw new RuntimeException("No policy found By license number: " + licenseNo);
         }
         return policies;
     }

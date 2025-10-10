@@ -30,3 +30,6 @@ management:
     export:
       prometheus:
         enabled: true  # Enable Prometheus metrics export
+
+# Kafka
+

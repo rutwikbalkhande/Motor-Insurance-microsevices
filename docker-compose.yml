@@ -1,0 +1,192 @@
+name: motor-insurance-stack
+
+services:
+  # ---------------------- #
+  #   Zookeeper + Kafka    #
+  # ---------------------- #
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9093:9092"  # Avoid 9092 conflict on host
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # ---------------------- #
+  #       Lenses HQ        #
+  # ---------------------- #
+  lenses-hq:
+    image: lensesio/lenses-hq:6.0
+    pull_policy: always
+    command: /app/config.yaml
+    environment:
+      - ACCEPT_EULA=true
+    ports:
+      - "9991:9991"
+    depends_on:
+      - postgres
+      - create-configs
+    healthcheck:
+      test: ["CMD", "lenses-hq", "is-up", "lenses-hq:9991"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - lenses-hq-volume:/app
+
+  lenses-agent:
+    image: lensesio/lenses-agent:6.0
+    pull_policy: always
+    environment:
+      DEMO_HQ_URL: http://lenses-hq:9991
+      DEMO_HQ_USER: admin
+      DEMO_HQ_PASSWORD: admin
+      DEMO_AGENTKEY_PATH: /mnt/settings/DEMO_AGENTKEY
+      LENSES_HEAP_OPTS: -Xmx1536m -Xms512m
+    depends_on:
+      - postgres
+      - lenses-hq
+      - create-configs
+    volumes:
+      - lenses-agent-volume:/mnt/settings
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: lenses
+      POSTGRES_PASSWORD: lenses
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lenses"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres-volume:/docker-entrypoint-initdb.d
+
+  create-configs:
+    image: busybox
+    command: >
+      sh -c '
+        printenv hq.config.yaml > /hq/config.yaml;
+        printenv agent.lenses.conf > /agent/lenses.conf;
+        printenv agent.provisioning.yaml > /agent/provisioning.yaml;
+        printenv postgres.init.sql > /postgres/init.sql
+      '
+    environment:
+      ACCEPT_EULA: "true"
+      hq.config.yaml: |
+        http:
+          address: :9991
+          secureSessionCookies: false
+        auth:
+          administrators:
+            - admin
+          users:
+            - username: admin
+              password: $$2a$$10$$DPQYpxj4Y2iTWeuF1n.ItewXnbYXh5/E9lQwDJ/cI/.gBboW2Hodm
+        agents:
+          address: :10000
+        database:
+          host: postgres:5432
+          username: lenses
+          password: lenses
+          database: hq
+        license:
+          key: license_key_2SFZ0BesCNu6NFv0-EOSIvY22ChSzNWXa5nSds2l4z3y7aBgRPKCVnaeMlS57hHNVboR2kKaQ8Mtv1LFt0MPBBACGhDT5If8PmTraUM5xXLz4MYv
+          acceptEULA: true
+      agent.lenses.conf: |
+        lenses.storage.postgres.host="postgres"
+        lenses.storage.postgres.port=5432
+        lenses.storage.postgres.database=agent
+        lenses.storage.postgres.username=lenses
+        lenses.storage.postgres.password=lenses
+        lenses.provisioning.path="/mnt/settings"
+        lenses.sql.state.dir="/data/lsql-state-dir"
+        lenses.secret.file="/data/security.conf"
+        lenses.storage.directory="/data/lenses"
+      agent.provisioning.yaml: |
+        lensesHq:
+          - configuration:
+              agentKey:
+                value: $${LENSESHQ_AGENT_KEY}
+              port:
+                value: 10000
+              server:
+                value: lenses-hq
+            name: lenses-hq
+            tags: ['hq']
+            version: 1
+        kafka:
+          - name: kafka
+            version: 1
+            tags: [ 'kafka', 'dev' ]
+            configuration:
+              kafkaBootstrapServers:
+                value: [PLAINTEXT://kafka:9092]
+              protocol:
+                value: PLAINTEXT
+      postgres.init.sql: |
+        CREATE DATABASE hq;
+        CREATE DATABASE agent;
+    volumes:
+      - lenses-hq-volume:/hq
+      - lenses-agent-volume:/agent
+      - postgres-volume:/postgres
+
+  # ---------------------- #
+  #   Spring Boot Services #
+  # ---------------------- #
+  user-service:
+    build: ./User
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - kafka
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  policy-service:
+    build: ./Policy
+    container_name: policy-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - kafka
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+# ---------------------- #
+#      Named Volumes     #
+# ---------------------- #
+volumes:
+  lenses-hq-volume:
+  lenses-agent-volume:
+  postgres-volume:
+
+# ---------------------- #
+#       Network           #
+# ---------------------- #
+networks:
+  default:
+    name: motor-insurance-network

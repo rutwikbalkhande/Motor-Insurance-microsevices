@@ -3,6 +3,7 @@ package com.example.DrivingHistory.service;
 import com.example.DrivingHistory.entity.DrivingHistory;
 import com.example.DrivingHistory.entity.UserDetails;
 import com.example.DrivingHistory.entity.UserHistoryDTO;
+import com.example.DrivingHistory.exceptionHandler.DetailsNotFoundExe;
 import com.example.DrivingHistory.repository.DrivingHistoryRepo;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,8 @@ public class DrivingserviceImpli implements DrivingService {
 
     @Override
     public DrivingHistory getHistoryById(String id) {
-        return drivingRepo.findById(id).orElse(null);
+        return drivingRepo.findById(id).
+                              orElseThrow(()->new DetailsNotFoundExe("user driving Record not Available " + id));
     }
 
     @Override
