@@ -29,7 +29,7 @@ public class DummyController {
 
 
 
-    // Dummy endpoint
+    // Dummy endpoint pass userId & license No to fetch data from DrivingHistory-Service
     @GetMapping("/generate/{userId}/{licenseNo}")
     public List<DummyPolicy> generatePolicies(@PathVariable Long userId ,@PathVariable String licenseNo ) {
         log.info("controller generatePolicies create policy for user: "+ userId +  licenseNo);
