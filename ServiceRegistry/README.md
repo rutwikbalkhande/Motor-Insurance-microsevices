@@ -27,7 +27,8 @@
 
 * ADD Eureka Client Dependancy
 * user service & Same dependancy in other services 
-* use same service port in application.yml file:
+* use same service port in application.yml file: "
+                  { set .yml in all services change name & defaultzone} "
   
 * polm.xml :
 <dependency>
@@ -35,14 +36,15 @@
 <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 </dependency>
 
-# set applicaton-eureka.yml
+# set applicaton-eureka.yml 
+"Set yml in all services "
 
 server:
 port:8083     // service module port keep same in yml
 
 spring:
 application:
-name:USER_SERVICE
+name:USER-SERVICE
 
     Eureka:
       client:

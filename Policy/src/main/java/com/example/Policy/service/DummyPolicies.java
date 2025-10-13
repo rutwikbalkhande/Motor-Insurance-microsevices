@@ -2,7 +2,9 @@ package com.example.Policy.service;
 
 import com.example.Policy.entity.dummyPolicy.DrivingHistoryDto;;
 import com.example.Policy.entity.dummyPolicy.DummyPolicy;
+import com.example.Policy.externalServiceCall.DrivingHistotyClient;
 import com.example.Policy.repository.DummyPolicyRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,13 +15,14 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DummyPolicies {
 
-    @Autowired
-    private DummyPolicyRepository dummyPolicyRepo;
 
-    @Autowired
-    public RestTemplate restTemplate;
+    private final DummyPolicyRepository dummyPolicyRepo;
+
+    private final DrivingHistotyClient drivingHistotyClient;
+    public final RestTemplate restTemplate;
 
     public DummyPolicy createPolicy(DummyPolicy policy){
 
@@ -35,13 +38,18 @@ public class DummyPolicies {
     }
 
 
+    // Dummy endpoint pass userId & license No to fetch data from DrivingHistory-Service
     public List<DummyPolicy> generateAndSavePolicies(Long userId , String licenseNo ) {
-        String url = "http://DRIVINGHISTORY-SERVICE/driving-history/search/" + licenseNo;
+/*
+             // call using RestTemplate
+                        String url = "http://DRIVINGHISTORY-SERVICE/driving-history/search/" + licenseNo;
 
-        DrivingHistoryDto response = restTemplate.getForObject(url, DrivingHistoryDto.class);
-        log.info("Policy = driving history data =" + response);
+                         DrivingHistoryDto response = restTemplate.getForObject(url, DrivingHistoryDto.class);
+                         log.info("Policy = driving history data =" + response);
+*/
+             DrivingHistoryDto response = drivingHistotyClient.searchByLicense(licenseNo);  // Use feignClient created method interface externalServiceCall
 
-        if (response == null) {
+             if (response == null) {
             throw new RuntimeException("No driving history found for license: " + licenseNo);
         }
             int age = response.getAge();

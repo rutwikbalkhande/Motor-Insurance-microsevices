@@ -1,7 +1,7 @@
 # to Run Spring project all services need to Run to Fetch Data 
 # Run ServiceRegistry "Eureka:
 
-     browser : http://localhost:8761/
+     browser : http://localhost:8761
 
 * Eureka client Add User pom.xml:   
 * set application.yml
@@ -16,11 +16,25 @@
 
     Run Docker File : "docker compose up -d"
 
-# Kafka Lenses  Running port :
+# Kafka Lenses  Running port : 9991
 
        localhost://9991
+# Prometheus : 
 
-* User-service {Producer} , Policy-service {Consumer}
+       http:localhost://9090
+* Prometheus Matrix EndPoints
+
+      http:localhost://8080/actuator/prometheus
+
+* Prometheu multiple Queries{Application Health}
+
+      http:localhost://8080/actuator/beans
+
+# Grafana :
+
+     http:localhost://3000
+
+# User-service {Producer} , Policy-service {Consumer}
       
        save data using: localhost://8081/user/kafkaproducer
 * Run All Services :
