@@ -18,6 +18,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepo;
+    private final PolicyFeignClient policyFeignClient;
     @Autowired
     public RestTemplate restTemplate;
 
@@ -56,11 +57,17 @@ public class UserService {
         User user=  userRepo.findById(userId).orElseThrow(
                 ()-> new RuntimeException("user not Found ! with ID:"+ userId));
 
-        // fetching Policies using user id from Policy Module Database
+/*
+        // fetching Policies using RestTemplate user id from Policy Module Database
         String url= "http://POLICY-SERVICE/policies/user/" + userId;      // String url= "http://localhost:8083/policies/user/" + userId;
 
 
         ArrayList<PolicyDTO> policies = restTemplate.getForObject(url, ArrayList.class);
+*/
+
+        //call using feign Client
+       List<PolicyDTO> policies= policyFeignClient.getPoliciesByUser(userId);
+
         if(policies== null || policies.isEmpty())
         {
             throw new PolicynotFoundException("user does not Buy any Policies");
@@ -71,6 +78,8 @@ public class UserService {
     }
 
 
+
+
     // fetching Dummy policies for user to check available policies & price based on licenceNo and age.
 
     public List<PolicyDTO> getUserWithDummyPolicies(String licenseNo ) {
@@ -78,7 +87,7 @@ public class UserService {
 
         String url= "http://POLICY-SERVICE/policies/dummy/generate/"+ licenseNo ;     // call Policy service - DummyController
 
-        return  restTemplate.getForObject(url,ArrayList.class);
+        return  restTemplate.getForObject(url,ArrayList.class);             // use RestTemplet to call other mocroservice
 
     }
 
