@@ -21,15 +21,49 @@ management:
   endpoints:
     web:
       exposure:
-        # include: health,info,metrics,prometheus  # expose Prometheus endpoint use any 1 '*' select all
         include: '*'
   endpoint:
     prometheus:
       enabled: true
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
   metrics:
     export:
       prometheus:
-        enabled: true  # Enable Prometheus metrics export
+        enabled: true
+    enable:
+      resilience4j.circuitbreaker.calls: true
 
 # Kafka
 
+
+# Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      # For the UserService → PolicyService call
+      userPolicyBreaker:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 5
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 10s
+        slidingWindowSize: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        slidingWindowType: COUNT_BASED
+
+      # ✅ For the PolicyService → DrivingHistoryService call
+      policyByHistory:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50            # 50% failure rate will trip the circuit
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 10s
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        slidingWindowType: COUNT_BASED
