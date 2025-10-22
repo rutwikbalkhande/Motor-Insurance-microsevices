@@ -1,12 +1,14 @@
 package com.example.Policy.entity.dummyPolicy;
 
 import com.example.Policy.service.DummyPolicies;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
 @Data
+@Builder
 public class DrivingHistoryDto {
 
     private String id;

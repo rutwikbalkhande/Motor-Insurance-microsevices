@@ -3,6 +3,7 @@ package com.example.User.controller;
 import com.example.User.entity.PolicyDTO;
 import com.example.User.entity.User;
 import com.example.User.service.UserService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -50,10 +51,26 @@ public class UserController {
     }
 
     //  Get user + policies (Privious purchase data)
-    @GetMapping("/policy/{userId}")
-    public User getPoliciesByUserId(@PathVariable Long userId) {
+     @GetMapping("/policy/{userId}")
+     @CircuitBreaker(name = "userPolicyBreaker", fallbackMethod = "userPolicyFallback")
+     public User getPoliciesByUserId(@PathVariable Long userId) {
         return userSer.getPoliciesByUserId(userId);
     }
+
+
+    // FallBack method if policy servic down the this dummy data
+    public User userPolicyFallback(Long userId, Exception ex) {
+        log.warn("Fallback triggered for userId {} because Policy Service is DOWN: {}", userId, ex.getMessage());
+
+        return User.builder()
+                .userid(9999L)
+                .fullName("Dummy User")
+                .email("fallback@gmail.com")
+                .age(35)
+                .licenseNo("Fallback license - Policy Service Unavailable")
+                .build();
+    }
+
 
     //policies for user  licenseNo & age use. generate prise for user
     @GetMapping("/policyLicenseNo/{licenseNo}")
