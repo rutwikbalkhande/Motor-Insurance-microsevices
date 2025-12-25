@@ -8,6 +8,9 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 @EnableEurekaServer
 public class ServiceRegistryApplication {
 
+	/*
+	in other microservice register here as client  <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId> u
+	 */
 	
 	public static void main(String[] args) {
 		SpringApplication.run(ServiceRegistryApplication.class, args);

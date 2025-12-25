@@ -1,7 +1,7 @@
 # service registry use for  "Eureka" 
-# * Showing All Services Endpoint with service Name & port *
+#  Showing All Services Endpoint with service Name & port *
 
-*     RUN User Service Port : 8081
+*  RUN User Service Port : 8081
 
 * Run Eureka application in browser
  
@@ -26,7 +26,8 @@
             { user, Policy, DrivingHistory, claim }
 
 * ADD Eureka Client Dependancy
-* user service & Same dependancy in other services 
+* user service & Same dependancy in other services  to register as a client after that it show here with with service name With Port 
+* also set property file in all services 
 * use same service port in application.yml file: "
                   { set .yml in all services change name & defaultzone} "
   
