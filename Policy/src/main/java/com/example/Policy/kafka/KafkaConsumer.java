@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Service
 public class KafkaConsumer {
+    // message produce by User service.
 
     private UserDTO lastReceivedUser; // store last message received
 
