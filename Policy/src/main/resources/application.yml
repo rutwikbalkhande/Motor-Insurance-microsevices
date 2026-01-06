@@ -3,18 +3,19 @@ server:
 
 spring:
   application:
-    name: Policy_promithus
+    name: policy-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/policy moto insurance
+    url: jdbc:mysql://mysql:3306/policy_motor_insurance
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-
+    database-platform: org.hibernate.dialect.MySQLDialect
 
 # Prometheus application.yml
 management:
