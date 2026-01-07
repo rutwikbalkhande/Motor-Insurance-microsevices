@@ -24,10 +24,17 @@ management:
   endpoint:
     prometheus:
       enabled: true
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+    kafka:
+      enabled: true
   metrics:
-    export:
-      prometheus:
-        enabled: true
+    enable:
+      resilience4j.circuitbreaker.calls: true
+
 
 # ✅ Eureka configuration
 eureka:
@@ -40,4 +47,17 @@ eureka:
     prefer-ip-address: true
 
 
-# Kafka file
+# Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      userPolicyBreaker:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 5
+        failureRateThreshold: 3
+        minimumNumberOfCalls: 5
+        waitDurationInOpenState: 10s
+        slidingWindowSize: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        slidingWindowType: COUNT_BASED

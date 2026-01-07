@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: rutwikbalkhande/motorinsurance-user-service:1.0
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: user-config
+                  key: SPRING_PROFILES_ACTIVE
+
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: user-config
+                  key: KAFKA_BOOTSTRAP_SERVERS
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-secret
+                  key: root
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080

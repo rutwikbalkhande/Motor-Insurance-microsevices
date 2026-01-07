@@ -1,0 +1,69 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven3'
+    }
+
+    environment {
+        IMAGE_NAME   = "rutwikbalkhande/motor-user-service"
+        IMAGE_TAG    = "latest"
+        DOCKER_CREDS = credentials('docker-hub-creds')
+    }
+
+    stages {
+
+        stage('Checkout Code from GitHub') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/rutwikbalkhande/Motor-Insurance-microservices.git'
+            }
+        }
+
+        stage('Build User Service (Maven)') {
+            steps {
+                dir('User') {
+                    bat 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('User') {
+                    bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
+                }
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                bat '''
+                docker login -u %DOCKER_CREDS_USR% -p %DOCKER_CREDS_PSW%
+                docker push %IMAGE_NAME%:%IMAGE_TAG%
+                '''
+            }
+        }
+
+        stage('Deploy using Docker Compose (Kafka + User Service)') {
+            steps {
+                dir('User') {
+                    bat '''
+                    docker-compose down
+                    docker-compose pull
+                    docker-compose up -d
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ User Service + Kafka deployed successfully using Docker Compose'
+        }
+        failure {
+            echo '❌ CI/CD failed'
+        }
+    }
+}
