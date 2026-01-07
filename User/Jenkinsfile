@@ -13,43 +13,33 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/rutwikbalkhande/Motor-Insurance-microsevices.git'
-            }
-        }
-
         stage('Build User Service') {
             steps {
-                dir('User') {
-                    sh 'mvn clean package -DskipTests'
-                }
+                sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                dir('User') {
-                    sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
-                }
+                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
             }
         }
 
         stage('Push Docker Image') {
             steps {
                 sh '''
-                docker login -u $DOCKER_CREDS_USR -p $DOCKER_CREDS_PSW
-                docker push $IMAGE_NAME:$IMAGE_TAG
+                  echo $DOCKER_CREDS_PSW | docker login -u $DOCKER_CREDS_USR --password-stdin
+                  docker push $IMAGE_NAME:$IMAGE_TAG
                 '''
             }
         }
+
         stage('Run Docker Compose') {
             steps {
                 sh '''
-                docker-compose down
-                docker-compose pull
-                docker-compose up -d
+                  docker-compose down || true
+                  docker-compose pull
+                  docker-compose up -d
                 '''
             }
         }
