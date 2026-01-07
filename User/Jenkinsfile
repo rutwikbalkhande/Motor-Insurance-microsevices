@@ -39,14 +39,16 @@ pipeline {
         }
 
         stage('Run Docker Compose') {
-                    steps {
-                        sh '''
-                          docker-compose down || true
-                          docker-compose pull
-                          docker-compose up -d
-                        '''
-                    }
+            steps {
+                dir('User') {
+                    sh '''
+                    docker compose down || true
+                    docker compose pull
+                    docker compose up -d
+                    '''
                 }
+            }
+        }
 
     }
 }
