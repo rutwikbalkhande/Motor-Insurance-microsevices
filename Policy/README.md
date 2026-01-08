@@ -74,3 +74,4 @@
 3.All dummy Policy for user
          
          Get: http://localhost:8083/policies/dummy/all
+

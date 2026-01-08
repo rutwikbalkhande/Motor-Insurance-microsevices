@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserProducer {
 
+    //User= producer , policy-Service= Consumer.
+
     @Autowired
     private UserRepository userRepo;
 
@@ -30,4 +32,6 @@ public class UserProducer {
         System.out.println("User saved & sent to Kafka notify Policy-Service: " + savedUser);
         return savedUser;
 }
+
+
 }

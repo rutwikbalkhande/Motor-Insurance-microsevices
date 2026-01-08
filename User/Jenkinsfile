@@ -6,8 +6,8 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = 'rutwikbalkhande/motor-user-service'
-        IMAGE_TAG  = 'latest'
+        IMAGE_NAME   = "rutwikbalkhande/motor-user-service"
+        IMAGE_TAG    = "latest"
         DOCKER_CREDS = credentials('docker-hub-creds')
     }
 

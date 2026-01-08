@@ -4,6 +4,7 @@ import com.example.User.entity.PolicyDTO;
 import com.example.User.entity.User;
 import com.example.User.exceptionHandler.InvalidInputException;
 import com.example.User.exceptionHandler.PolicynotFoundException;
+import com.example.User.exceptionHandler.UserNotFoundException;
 import com.example.User.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
