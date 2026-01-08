@@ -13,17 +13,10 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code from GitHub') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/rutwikbalkhande/Motor-Insurance-microservices.git'
-            }
-        }
-
-        stage('Build User Service (Maven)') {
+        stage('Build User Service') {
             steps {
                 dir('User') {
-                    bat 'mvn clean package -DskipTests'
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
@@ -31,39 +24,40 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('User') {
-                    bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
+                    sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
                 }
             }
         }
 
-        stage('Push Docker Image to Docker Hub') {
+        stage('Push Docker Image') {
             steps {
-                bat '''
-                docker login -u %DOCKER_CREDS_USR% -p %DOCKER_CREDS_PSW%
-                docker push %IMAGE_NAME%:%IMAGE_TAG%
+                sh '''
+                  echo $DOCKER_CREDS_PSW | docker login -u $DOCKER_CREDS_USR --password-stdin
+                  docker push $IMAGE_NAME:$IMAGE_TAG
                 '''
             }
         }
 
-        stage('Deploy using Docker Compose (Kafka + User Service)') {
-            steps {
-                dir('User') {
-                    bat '''
-                    docker-compose down
-                    docker-compose pull
-                    docker-compose up -d
-                    '''
-                }
-            }
-        }
-    }
+       stage('Run Docker Compose') {
+           steps {
+               dir('User') {
+                   sh '''
+                   docker compose down || true
 
-    post {
-        success {
-            echo '✅ User Service + Kafka deployed successfully using Docker Compose'
-        }
-        failure {
-            echo '❌ CI/CD failed'
-        }
+                   docker compose up -d
+                   '''
+               }
+           }
+       }
+         stage('Deploy to Kubernetes') {
+             steps {
+              dir('User') {
+                 sh '''
+                 kubectl apply -f User/k8s/
+                 '''
+             }
+             }
+         }
+
     }
 }

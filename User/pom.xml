@@ -31,7 +31,7 @@
 		<camel.version>4.7.0</camel.version>
 		<spring-cloud.version>2025.0.0</spring-cloud.version>
 
-	</properties>
+    </properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -110,7 +110,10 @@
 		</dependency>
 
 
-	</dependencies>
+
+
+
+    </dependencies>
 
 <dependencyManagement>
 <dependencies>
