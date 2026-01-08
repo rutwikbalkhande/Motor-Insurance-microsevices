@@ -39,25 +39,22 @@ pipeline {
         }
 
        stage('Run Docker Compose') {
-           steps {
-               dir('User') {
-                   sh '''
-                   docker compose down || true
+                   steps {
+                       dir('User') {
+                           sh '''
+                           docker-compose down || true
+                           docker-compose up -d
+                           '''
+                       }
+                   }
+               }
 
-                   docker compose up -d
-                   '''
+               stage('Deploy to Kubernetes') {
+                   steps {
+                       dir('User') {
+                           sh 'kubectl apply -f k8s/'
+                       }
+                   }
                }
            }
        }
-         stage('Deploy to Kubernetes') {
-             steps {
-              dir('User') {
-                 sh '''
-                 kubectl apply -f User/k8s/
-                 '''
-             }
-             }
-         }
-
-    }
-}
