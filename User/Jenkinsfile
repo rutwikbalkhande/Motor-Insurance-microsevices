@@ -49,12 +49,6 @@ pipeline {
                    }
                }
 
-               stage('Deploy to Kubernetes') {
-                   steps {
-                       dir('User') {
-                           sh 'kubectl apply -f k8s/'
-                       }
-                   }
-               }
+
            }
        }
