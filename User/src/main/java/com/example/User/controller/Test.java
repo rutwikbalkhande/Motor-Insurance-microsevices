@@ -23,6 +23,7 @@ public class Test {
 
     @GetMapping("/all")
     public List<?> getAllUser() {
+        System.out.println("this is testing og jenkkins");
         log.warn("controller class " );
         return testser.getAllUser();
     }
