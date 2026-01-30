@@ -177,6 +177,9 @@ services:
       - lenses-hq-volume:/hq
       - lenses-agent-volume:/agent
       - postgres-volume:/postgres
+#--------------------------------------
+
+#-------------------------------------
 
 volumes:
   lenses-hq-volume:
