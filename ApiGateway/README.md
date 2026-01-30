@@ -36,3 +36,23 @@ we can use generally uri- "service name" instead of "localhost:8080"
        - Path=/users/**
 
    
+# Authentication impliment Security folder
+
+    api-gateway
+    ├── security
+    │   ├── JwtUtil               (VALIDATE token)
+    │   └── JwtAuthenticationFilter
+    ├── config
+    │   └── GatewayRoutes
+    ├── application.yml
+
+# 🔁 REQUEST FLOW (READ THIS TWICE)
+    Client
+     ↓  (JWT in header)
+    API Gateway
+     ↓  (validate token)
+    User Service
+
+
+If token is ❌ invalid → request stops at gateway
+If token is ✅ valid → request goes forward

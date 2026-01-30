@@ -12,25 +12,29 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+
         - id: user-service
-          uri: http://localhost:8081
+          uri: lb://user-service    # http://localhost:8081
           predicates:
             - Path=/users/**
 
+
         - id: drivinghistory-service
-          uri: http://localhost:8082
+          uri: lb://drivinghistory-service
           predicates:
             - Path=/driving-history/**
 
         - id:  policy-service
-          uri: http://localhost:8083
+          uri: lb://policy-service
           predicates:
             - Path=/policies/**
 
         - id: claim-service
-          uri: http://localhost:8084
+          uri: lb://claim-service
           predicates:
             - Path=/claims/**
+
+
 
 eureka:
   client:
