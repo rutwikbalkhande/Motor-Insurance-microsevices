@@ -4,15 +4,19 @@ package com.example.Claim_Module.service;
 import com.example.Claim_Module.ExceptionHandler.customException.ClaimNotFoundException;
 import com.example.Claim_Module.entity.Claim;
 import com.example.Claim_Module.entity.ClaimResponse;
+import com.example.Claim_Module.entity.FileHandling;
 import com.example.Claim_Module.entity.PolicyDto;
 import com.example.Claim_Module.repository.ClaimMysqlRepository;
+import com.example.Claim_Module.repository.FileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.metamodel.internal.StandardEmbeddableInstantiator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -22,6 +26,10 @@ public class ClaimService {
 
     @Autowired
     private ClaimMysqlRepository repository;
+
+    @Autowired
+    private  FileRepository fileRepo;
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -103,6 +111,24 @@ public class ClaimService {
 
         }
 
+        public FileHandling upload(MultipartFile file, Long userId) throws IOException
+        {
+              FileHandling entity= new FileHandling();
+              entity.setUserId(userId);
+              entity.setFilename(file.getOriginalFilename());
+              entity.setFileType(file.getContentType());
+              entity.setData(file.getBytes());
+
+            return fileRepo.save(entity);
+        }
+
+        public FileHandling downloadFileByUserId(Long userId)
+        {
+            return fileRepo.findFirstByUserId(userId).
+                         orElseThrow(()-> new RuntimeException("file not found with userid: "+ userId));
+
+        }
+
 /*
         //  Optional: get Claim + Policy DTO
         public Claim getClaim(String claimId) {
@@ -121,6 +147,6 @@ public class ClaimService {
             //  Combine both into a ClaimResponse
             return new Claim(claim, policyDto);
         }
-
 */
+
     }

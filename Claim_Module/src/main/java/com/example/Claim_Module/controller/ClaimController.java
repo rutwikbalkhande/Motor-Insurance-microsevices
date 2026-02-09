@@ -2,13 +2,18 @@ package com.example.Claim_Module.controller;
 
 import com.example.Claim_Module.entity.Claim;
 import com.example.Claim_Module.entity.ClaimResponse;
+import com.example.Claim_Module.entity.FileHandling;
 import com.example.Claim_Module.entity.PolicyDto;
 import com.example.Claim_Module.service.ClaimService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -61,7 +66,27 @@ public class ClaimController {
         log.info("Fetching claim with policy details for claim ID: {}", claimId);
         return claimService.getClaim(claimId);
     }
-
     */
 
+    // upload pdf / jpg file key , value "file, userId"
+    @PostMapping("/upload")
+   public ResponseEntity< ? > uploadfile(@RequestParam("file") MultipartFile file, @RequestParam Long userId) throws IOException
+   {
+           FileHandling saved = claimService.upload(file, userId);
+           return ResponseEntity.ok("File uploaded with id: "+ saved.getId());
+   }
+
+   //  ✅ Download using userId
+    @GetMapping("/download/{userId}")
+   public ResponseEntity<byte[]> downloadFile(@PathVariable Long userId)
+   {
+
+        FileHandling file = claimService.downloadFileByUserId(userId);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + file.getFilename() + "\"")
+                .contentType(MediaType.parseMediaType(file.getFileType()))
+                .body(file.getData());
+   }
 }

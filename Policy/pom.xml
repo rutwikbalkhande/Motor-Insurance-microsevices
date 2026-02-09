@@ -68,7 +68,6 @@
 			<version>2.5.0</version>
 		</dependency>
 
-
 		<!-- Actuator for metrics endpoints -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

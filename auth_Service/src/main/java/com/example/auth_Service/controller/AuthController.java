@@ -1,12 +1,15 @@
 package com.example.auth_Service.controller;
 
+import com.example.auth_Service.dto.AuthResponse;
 import com.example.auth_Service.dto.LoginRequest;
-import com.example.auth_Service.entity.SignupRequest;
+import com.example.auth_Service.dto.SignupRequest;
 import com.example.auth_Service.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -17,28 +20,18 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    //SignUp create new username password  "unique"
     @PostMapping("/signup")
-    public String signUp(@RequestBody SignupRequest request)
-    {
-
-        return authService.signup(request);
+    public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
+        return ResponseEntity.ok(
+                Map.of("message", authService.signup(request))
+        );
     }
 
-    // login using username, password
+    // LOGIN (CLEAN)
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request)
-    {
-        System.out.println("LOGIN API HIT");
-        return authService.login(request.getUsername(), request.getPassword());
-    }
+    public ResponseEntity<AuthResponse> login(
+            @RequestBody LoginRequest request) {
 
-    // not working
-    //check current user who logged in
-    @GetMapping("/currentuser")
-    public String cureentLogeIn(Principal principal)
-    {
-        return authService.currentlogein(principal);
+        return ResponseEntity.ok(authService.login(request));
     }
 }
-

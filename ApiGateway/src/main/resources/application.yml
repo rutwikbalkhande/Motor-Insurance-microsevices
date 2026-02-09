@@ -13,10 +13,15 @@ spring:
           lower-case-service-id: true
       routes:
 
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+             - Path=/auth/**
+
         - id: user-service
           uri: lb://user-service    # http://localhost:8081
           predicates:
-            - Path=/users/**
+            - Path=/users/**,/admin/**,/test/**
 
 
         - id: drivinghistory-service
