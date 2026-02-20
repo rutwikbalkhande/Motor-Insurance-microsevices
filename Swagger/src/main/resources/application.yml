@@ -1,0 +1,13 @@
+server:
+  port: 8089
+
+spring:
+  application:
+    name: SWAGGER-SERVICE
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: USER-SERVICE
+        url: http://localhost:8081/v3/api-docs
+
