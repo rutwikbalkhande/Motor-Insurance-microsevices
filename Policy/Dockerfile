@@ -5,7 +5,7 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 # 3️⃣ Copy Spring Boot JAR file
-COPY target/Policy-0.0.1-SNAPSHOT.jar app.jar
+COPY target/*.jar app.jar
 
 # 4️⃣ Expose application port
 EXPOSE 8083

@@ -33,8 +33,18 @@ public class AuthService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole("user_role");
 
+        // ✅ SAFE ROLE HANDLING
+        String role = (request.getRole() != null && !request.getRole().isBlank())
+                ? request.getRole().toUpperCase()
+                : "ROLE_USER";
+
+        // ✅ ROLE VALIDATION
+        if (!role.equals("ROLE_USER") && !role.equals("ROLE_ADMIN")) {
+            throw new IllegalArgumentException("Invalid role value: " + role);
+        }
+
+        user.setRole(role);
         userRepository.save(user);
 
         return "User registered successfully";

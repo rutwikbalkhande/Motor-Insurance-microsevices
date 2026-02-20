@@ -39,12 +39,21 @@ spring:
           predicates:
             - Path=/claims/**
 
-
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    enable:
+      all: true
+  endpoint:
+    prometheus:
+      enabled: true
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/   # For Docker image  # http://service-registry:8761/eur
     register-with-eureka: true
     fetch-registry: true
   instance:

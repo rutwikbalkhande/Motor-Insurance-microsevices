@@ -1,20 +1,18 @@
 package com.example.DrivingHistory.entity;
 
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.lang.annotation.Documented;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("DrivingHistory")
+@Document("DrivingHistory")   // Mongo DB using
+//@Entity
 public class DrivingHistory {
 
     @Id
