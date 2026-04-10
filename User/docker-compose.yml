@@ -1,7 +1,138 @@
 #run cmd=" docker compose up -d " run kafka & Kafka Lenses " localhost://9991 "
 
-name: lenses-ce
 services:
+# Run All servisesdefine how to run
+
+  # 🛢️ MYSQL DATABASE running in docker
+  mysql-docker-motorinsu:
+    image: mysql:8
+    container_name: mysql-docker-motorinsu
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: motor_insurance
+      MYSQL_USER: rutwik
+      MYSQL_PASSWORD: rutwik
+    ports:
+      - "3305:3306"
+    volumes:
+      - user_mysql_motor_insurance_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - motor-network
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+    networks:
+      - app-network
+
+
+  # 🧭 EUREKA REGISTRY
+  service-registry:
+    image: service-registry:latest
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+
+    networks:
+      - motor-network
+
+  # 🌐 API GATEWAY
+  api-gateway:
+    image: api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8085:8085"
+    depends_on:
+      - service-registry
+    networks:
+      - motor-network
+
+  # 🔐 AUTH SERVICE
+  auth-service:
+    image: auth-service:latest
+    container_name: auth-service
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-docker-motorinsu:3306/auth_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    depends_on:
+      mysql-docker-motorinsu:
+        condition: service_healthy
+      service-registry:
+        condition: service_started
+    networks:
+      - motor-network
+
+  # 👤 USER SERVICE
+  user-service:
+    image: user-service:latest
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-docker-motorinsu:3306/user_moto_insurance
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    depends_on:
+      mysql-docker-motorinsu:
+        condition: service_healthy
+      service-registry:
+        condition: service_started
+    networks:
+      - motor-network
+
+  # 📜 POLICY SERVICE
+  policy-service:
+    image: policy-service:latest
+    container_name: policy-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-docker-motorinsu:3306/policy_motor_insurance
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    depends_on:
+      mysql-docker-motorinsu:
+        condition: service_healthy
+      service-registry:
+        condition: service_started
+    networks:
+      - motor-network
+
+  # 📜 CLAIM SERVICE
+  claim-service:
+    image: claim-service:latest
+    container_name: claim-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-docker-motorinsu:3306/claim_module_mi
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    depends_on:
+      mysql-docker-motorinsu:
+        condition: service_healthy
+      service-registry:
+        condition: service_started
+    networks:
+      - motor-network
+
+
+    # 🖥️ Lenses HQ .........................
   lenses-hq:
     image: lensesio/lenses-hq:6.0
     pull_policy: always
@@ -24,6 +155,7 @@ services:
     volumes:
       - lenses-hq-volume:/app
 
+# 🤖 Lenses Agent
   lenses-agent:
     image: lensesio/lenses-agent:6.0
     pull_policy: always
@@ -43,6 +175,7 @@ services:
     volumes:
       - lenses-agent-volume:/mnt/settings
 
+  # 🐘 POSTGRES (for Lenses)
   postgres:
     image: postgres
     environment:
@@ -59,6 +192,7 @@ services:
     volumes:
       - postgres-volume:/docker-entrypoint-initdb.d
 
+# 🧠 Kafka (Fast Data Dev)
   demo-kafka:
     image: lensesio/fast-data-dev:3.9.0
     hostname: demo-kafka
@@ -182,6 +316,7 @@ services:
 #-------------------------------------
 
 volumes:
+  user_mysql_motor_insurance_data:
   lenses-hq-volume:
   lenses-agent-volume:
   postgres-volume:

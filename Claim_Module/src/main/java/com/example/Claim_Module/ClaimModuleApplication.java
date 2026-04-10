@@ -2,13 +2,15 @@ package com.example.Claim_Module;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class ClaimModuleApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ClaimModuleApplication.class, args);
-		System.out.println("started....");
+		System.out.println("started claim service....");
 	}
 
 }

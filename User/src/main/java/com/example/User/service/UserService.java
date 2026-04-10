@@ -8,6 +8,10 @@ import com.example.User.exceptionHandler.UserNotFoundException;
 import com.example.User.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,6 +28,7 @@ public class UserService {
     public RestTemplate restTemplate;
 
     //save user
+    @Cacheable(value = "User" , key= "#id" )
     public User createUser(User user) {
         return userRepo.save(user);
     }
@@ -49,6 +54,13 @@ public class UserService {
     //delete
     public void delete(Long userId) {
         userRepo.deleteById(userId);
+    }
+
+    // Pageable
+    public Page<User> pageableList(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepo.findAll(pageable);
     }
 
 
