@@ -1,0 +1,46 @@
+package com.example.User.aop;
+
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+
+@Aspect
+@Slf4j
+@Component
+public class LoggingAspect {
+
+    // ✅ FIXED package path
+    @Pointcut("execution(* com.example.ev_station_service.controller..*(..)) || " +
+            "execution(* com.example.ev_station_service.service..*(..))")
+    public void applicationPackagePointcut() {}
+
+    // 🔹 Before method
+    @Before("applicationPackagePointcut()")
+    public void logBefore(JoinPoint joinPoint) {
+        log.info("➡️ Entering: {}.{}() args={}",
+                joinPoint.getSignature().getDeclaringTypeName(),  // class name
+                joinPoint.getSignature().getName(),                // method name
+                Arrays.toString(joinPoint.getArgs()));           // data value argument pass in url ex.: 15
+    }
+
+    // 🔹 After returning
+    @AfterReturning(pointcut = "applicationPackagePointcut()", returning = "result")
+    public void logAfterReturning(JoinPoint joinPoint, Object result) {
+        log.info("✅ Exiting: {}.{}() result={}",
+                joinPoint.getSignature().getDeclaringTypeName(),
+                joinPoint.getSignature().getName(),
+                result);
+    }
+
+    // 🔹 Exception
+    @AfterThrowing(pointcut = "applicationPackagePointcut()", throwing = "ex")
+    public void logAfterThrowing(JoinPoint joinPoint, Exception ex) {
+        log.error("❌ Exception in {}.{}() message={}",
+                joinPoint.getSignature().getDeclaringTypeName(),
+                joinPoint.getSignature().getName(),
+                ex.getMessage());
+    }
+}
