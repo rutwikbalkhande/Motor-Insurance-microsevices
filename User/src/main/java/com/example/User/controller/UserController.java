@@ -2,6 +2,7 @@ package com.example.User.controller;
 
 import com.example.User.entity.PolicyDTO;
 import com.example.User.entity.User;
+import com.example.User.entity.UserDTO;
 import com.example.User.service.UserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
@@ -104,6 +105,14 @@ public class UserController {
                                    @RequestParam("defaultValue=10") int size){
 
         return userSer. pageableList(page, size);
+    }
+
+    @PatchMapping("update/{userId}")
+    public  ResponseEntity<User> partialUpdateUser(@PathVariable Long userId, @RequestBody UserDTO userDto){
+
+        User updatedUser = userSer.partialUpdate(userId, userDto);
+
+        return ResponseEntity.ok(updatedUser);
     }
 
 }

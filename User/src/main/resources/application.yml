@@ -77,3 +77,11 @@ resilience4j:
         automaticTransitionFromOpenToHalfOpenEnabled: true
         slidingWindowType: COUNT_BASED
 
+# AOP loggingg
+logging:
+  level:
+    root: INFO
+    com.example.evstation: DEBUG
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

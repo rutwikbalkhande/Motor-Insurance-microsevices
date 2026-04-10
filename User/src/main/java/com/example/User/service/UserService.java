@@ -1,10 +1,14 @@
 package com.example.User.service;
 
+import com.example.User.annotation.AuditAction;
+import com.example.User.annotation.LogExecutionTime;
 import com.example.User.entity.PolicyDTO;
 import com.example.User.entity.User;
+import com.example.User.entity.UserDTO;
 import com.example.User.exceptionHandler.InvalidInputException;
 import com.example.User.exceptionHandler.PolicynotFoundException;
 import com.example.User.exceptionHandler.UserNotFoundException;
+import com.example.User.mapper.UserMapper;
 import com.example.User.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,21 +29,25 @@ public class UserService {
 
     private final UserRepository userRepo;
     private final PolicyFeignClient policyFeignClient;
+    private final UserMapper mapper;
     @Autowired
     public RestTemplate restTemplate;
 
     //save user
     @Cacheable(value = "User" , key= "#id" )
+    @AuditAction(action= "create")
     public User createUser(User user) {
         return userRepo.save(user);
     }
 
     //All user
+    @LogExecutionTime
     public List<User> getAllUser() {
         return userRepo.findAll();
     }
 
     //user by ID
+    @LogExecutionTime
     public User getById(Long userId) {
 
         User user = userRepo.findById(userId)
@@ -46,24 +55,27 @@ public class UserService {
         return  user;
 
     }
+    @LogExecutionTime
     public User findByLincense(String license)
     {
         return userRepo.findByLicenseNo(license);
     }
 
     //delete
+    @AuditAction(action= "delete")
     public void delete(Long userId) {
         userRepo.deleteById(userId);
     }
 
     // Pageable
+    @LogExecutionTime
     public Page<User> pageableList(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
         return userRepo.findAll(pageable);
     }
 
-
+    @LogExecutionTime
     public User getPoliciesByUserId(Long userId)
     {
         //get user from Mysql
@@ -92,9 +104,8 @@ public class UserService {
 
 
 
-
     // fetching Dummy policies for user to check available policies & price based on licenceNo and age.
-
+    @LogExecutionTime
     public List<PolicyDTO> getUserWithDummyPolicies(String licenseNo ) {
       //  User user = userRepo.findByLicenseNo(licenseNo);
 
@@ -104,4 +115,13 @@ public class UserService {
 
     }
 
+    public User partialUpdate(Long userId, UserDTO userDto){
+
+      User user =  userRepo.findById(userId).orElseThrow(()-> new RuntimeException("User not found with ID: " + userId));
+
+        // ✅ MapStruct update
+        mapper.updateUserFromDto(userDto, user);
+
+        return userRepo.save(user);
+    }
 }
