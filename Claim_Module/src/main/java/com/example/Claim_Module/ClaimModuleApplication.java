@@ -10,7 +10,7 @@ public class ClaimModuleApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ClaimModuleApplication.class, args);
-		System.out.println("started claim service....");
+		System.out.println("started....");
 	}
 
 }

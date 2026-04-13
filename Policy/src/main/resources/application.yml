@@ -6,7 +6,7 @@ spring:
     name: Policy_Service
 
   datasource:
-    #url: jdbc:mysql://localhost:3305/policy_motor_insurance   # DB in Docker
+    #url: jdbc:mysql://localhost:3305/policy_motor_insurance   # DB in Docker create jar //use "mysql-docker" container name insted "localhost"
     url: jdbc:mysql://localhost:3306/policy_motor_insurance   # DB Locally
     username: root
     password: root
