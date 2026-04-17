@@ -6,7 +6,7 @@ spring:
     name: USER-SERVICE
 
   datasource:
-    #url: jdbc:mysql://localhost:3305/user_moto_insurance   # docker DB , # DB in Docker -> create jar use "mysql-docker" container name insted "localhost"
+    #url: jdbc:mysql://localhost:3305/user_moto_insurance   # docker DB # DB in Docker -> create jar use "mysql-docker" container name insted "localhost"
     url: jdbc:mysql://localhost:3306/use_moto_insurance   #  local DB
     username: root
     password: root
