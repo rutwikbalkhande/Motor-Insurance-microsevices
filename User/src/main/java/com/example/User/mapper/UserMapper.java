@@ -6,15 +6,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel="spring", nullValuePropertyMappingStrategy =  NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
 
-    //Entity -> DTO
-         UserDTO toDTO (User user);
+    UserDTO toDTO(User user);
 
-    //DTO -> Entity
-    User toUser(UserDTO userDto);
+    User toUser(UserDTO dto);
 
-    // ✅ Partial updatepartial update
-    void updateUserFromDto(UserDTO dto, @MappingTarget User user);
+    void updateUserFromDto(UserDTO dto,
+                           @MappingTarget User user);
 }

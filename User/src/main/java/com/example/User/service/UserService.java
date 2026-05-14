@@ -29,6 +29,7 @@ public class UserService {
 
     private final UserRepository userRepo;
     private final PolicyFeignClient policyFeignClient;
+
     private final UserMapper mapper;
     @Autowired
     public RestTemplate restTemplate;
@@ -115,8 +116,8 @@ public class UserService {
 
     }
 
+    // partial update => Mapper pkg use
     public User partialUpdate(Long userId, UserDTO userDto){
-
       User user =  userRepo.findById(userId).orElseThrow(()-> new RuntimeException("User not found with ID: " + userId));
 
         // ✅ MapStruct update

@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 */
 public class DrivingHistoryDTO {
-/*
+
     private String id;
 
     private Long userId;       // Link with User Service
@@ -26,5 +26,5 @@ public class DrivingHistoryDTO {
     User user;
     List<?> history;
 
- */
+
 }

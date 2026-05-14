@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    // Poicy Service Error
+    // Policy Service Error
     @ExceptionHandler(PolicynotFoundException.class)
     public ResponseEntity<ErrorResponse> handlepolicyException (PolicynotFoundException ex, WebRequest request){
 

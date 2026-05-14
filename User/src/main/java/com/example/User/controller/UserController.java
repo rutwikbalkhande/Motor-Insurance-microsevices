@@ -88,7 +88,7 @@ public class UserController {
 
 
 
-    //policies for user  licenseNo & age use. generate prise for user
+    //policies for user  licenseNo & age use. generate price for user
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/policyLicenseNo/{licenseNo}")
     public List<PolicyDTO> getUserWithDummyPolicies(@PathVariable String licenseNo){
