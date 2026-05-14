@@ -26,10 +26,7 @@
 
 1️⃣ Save a Claim
 
-    POST URL:
-
-    http://localhost:8084/claims/save
-
+    POST URL: http://localhost:8084/claims/save
 
 Body (JSON):
 
@@ -62,11 +59,7 @@ Response (JSON):
 
 2️⃣ Get Claim by ID
 
-    GET URL:
-
-        http://localhost:8084/claims/6
-
-
+    GET URL: http://localhost:8084/claims/6
 Response:
 
         {
@@ -82,13 +75,9 @@ Response:
 
 3️⃣ Get Claim by License Number
 
-    GET URL:
+    GET URL: http://localhost:8084/claims/license/MH123457
 
-          http://localhost:8084/claims/license/MH123457
-
-
-         Response:
-      {
+         Response: {
           "claimId": 1696357260000,
           "userId": 3,
            "policyNo": "POL-1234",
@@ -101,13 +90,10 @@ Response:
 
 4️⃣ Update Claim
 
-     PUT URL:
-
-     http://localhost:8084/claims/update/1696357260000?status=APPROVED&claimAmount=6000
+     PUT URL: http://localhost:8084/claims/update/1696357260000?status=APPROVED&claimAmount=6000
 
 
 Response:
-
        { 
         "claimId": 1696357260000,
          "userId": 3,
@@ -125,13 +111,10 @@ Update Data
 
 Claim By Policy Details
 
-    GET URL:
-
-        http://localhost:8084/claims/with-policy/1696357260000
+    GET URL: http://localhost:8084/claims/with-policy/1696357260000
 
 
 Response:
-         
       {
       "claim": {
          "claimId": 1696357260000,
@@ -151,6 +134,170 @@ Response:
                "premiumAmount": 5000.0,
                "startDate": "2025-01-01",
                "endDate": "2025-12-31"
-              
 }
 }
+--------------------------------------------------------------------------------------
+
+# 🚗 Claim Service APIs
+
+---
+
+# 1️⃣ Save Claim
+
+         POST URL: http://localhost:8084/claims/save
+```json
+{
+  "licenseNo": "MH123456",
+  "claimAmount": 25000,
+  "status": "PENDING"
+}
+```
+
+---
+
+# 2️⃣ Get All Claims
+
+## GET URL
+
+```http
+http://localhost:8084/claims/all
+```
+
+---
+
+# 3️⃣ Get Claim By ID
+
+## GET URL
+
+```http
+http://localhost:8084/claims/1
+```
+
+---
+
+# 4️⃣ Get Claim By License Number
+
+## GET URL
+
+```http
+http://localhost:8084/claims/license/MH123456
+```
+
+---
+
+# 5️⃣ Update Claim
+
+## PUT URL
+
+```http
+http://localhost:8084/claims/update/1?status=APPROVED&claimAmount=50000
+```
+
+---
+
+# 6️⃣ Upload Claim File
+
+Supports:
+
+- PDF
+- JPG
+- PNG
+
+## POST URL
+
+```http
+http://localhost:8084/claims/upload
+```
+
+---
+
+# Postman Steps
+
+## Step 1
+
+Select:
+
+```text
+POST
+```
+
+---
+
+## Step 2
+
+Go to:
+
+```text
+Body
+```
+
+---
+
+## Step 3
+
+Select:
+
+```text
+form-data
+```
+
+---
+
+## Step 4
+
+Add Keys
+
+| KEY | TYPE | VALUE |
+|---|---|---|
+| file | File | Select PDF/JPG |
+| userId | Text | 2 |
+
+---
+
+# 7️⃣ Download Claim File
+
+## GET URL
+
+```http
+http://localhost:8084/claims/download/2
+```
+
+---
+
+# Postman Steps
+
+## Step 1
+
+Select:
+
+```text
+GET
+```
+
+---
+
+## Step 2
+
+Enter URL
+
+```http
+http://localhost:8084/claims/download/2
+```
+
+---
+
+## Step 3
+
+Click:
+
+```text
+Send
+```
+
+---
+
+# Base URL
+
+```http
+http://localhost:8084/claims
+```

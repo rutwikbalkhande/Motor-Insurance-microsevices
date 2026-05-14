@@ -59,6 +59,10 @@
          http://localhost:8085/users/.....
                    ex: save, all, 1, policy/1, newPolicies/Mh278648/35
 
+7. Pdf user-policy 
+    
+         http://localhost:8085/users/generate-pdf/1
+
 * 4th API Calls Policy service internally
 * entity = PolicyWithUserDTO
 * service = UserService  method = getUserWithPolicies

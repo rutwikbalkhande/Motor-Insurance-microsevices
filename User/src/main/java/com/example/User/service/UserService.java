@@ -10,6 +10,9 @@ import com.example.User.exceptionHandler.PolicynotFoundException;
 import com.example.User.exceptionHandler.UserNotFoundException;
 import com.example.User.mapper.UserMapper;
 import com.example.User.repository.UserRepository;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,4 +129,96 @@ public class UserService {
 
         return userRepo.save(user);
     }
-}
+
+    public byte[] generatePdf(Long userId) {
+
+        // 1️⃣ Fetch User
+        User user = userRepo.findById(userId)
+                       .orElseThrow(() -> new RuntimeException("User Not Found With ID : " + userId));
+
+        // 2️⃣ Fetch Policies using Feign Client
+        List<PolicyDTO> policies =
+                policyFeignClient.getPoliciesByUser(userId);
+
+        if (policies == null || policies.isEmpty()) {
+
+            throw new RuntimeException("No Policies Found");
+        }
+
+        // 3️⃣ Set Policies
+        user.setPolicies(policies);
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            Document document = new Document();
+
+            PdfWriter.getInstance(document, out);
+
+            document.open();
+
+            // ===== TITLE =====
+
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
+
+            Paragraph title = new Paragraph("Motor Insurance Report", titleFont);
+
+            title.setAlignment(Element.ALIGN_CENTER);
+
+            document.add(title);
+
+            document.add(new Paragraph(" "));
+
+            // ===== USER DETAILS =====
+
+            document.add(new Paragraph("User ID : " + user.getUserid()));
+
+            document.add(new Paragraph("Name : " + user.getFullName()));
+
+            document.add(new Paragraph("Email : " + user.getEmail()));
+
+            document.add(new Paragraph("Phone : " + user.getPhone()));
+
+            document.add(new Paragraph("License No : " + user.getLicenseNo()));
+
+            document.add(new Paragraph(" "));
+
+            // ===== POLICY TABLE =====
+
+            PdfPTable table = new PdfPTable(5);
+
+            table.setWidthPercentage(100);
+
+            table.addCell("Policy No");
+            table.addCell("Vehicle Type");
+            table.addCell("Premium");
+            table.addCell("Start Date");
+            table.addCell("End Date");
+
+            // Loop Policies
+            for (PolicyDTO policy : policies) {
+
+                table.addCell(policy.getPolicyNo());
+
+                table.addCell(policy.getType());
+
+                table.addCell(String.valueOf(policy.getPremium_amount()));
+
+                table.addCell(String.valueOf(policy.getStartDate()));
+
+                table.addCell(String.valueOf(policy.getEndDate()));
+            }
+
+            document.add(table);
+
+            document.close();
+
+            return out.toByteArray();
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(
+                    "PDF Generation Failed");
+        }
+    }
+
+    }
